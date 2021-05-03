@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <!-- Include JavaScript-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <title></title>
+  </head>
+  <body>
+    <h1>This is the test1 route</h1>
+
+    <!--<form class="processRequest" action="processRequest" method="get">
+      {% csrf_token %}
+      <
+      <button type="submit" name="button">Button!</button>
+    </form>-->
+    <button type="button" name="button" id="myButton">Click me!</button>
+
+    <script>
+      $(document).ready(function(){
+
+      });
+      document.getElementById('myButton').onclick = function(){
+        $.ajax({
+          type: "POST",
+          url: "processRequest",
+          data: {
+            'test': 'sometodo' // from form
+          },
+        });
+      }
+    </script>
+
+  </body>
+</html>

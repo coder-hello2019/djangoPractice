@@ -1,0 +1,210 @@
+<html>
+</<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Activity Timer</title>
+
+    <!-- Include JavaScript-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+    <!-- Include Bootstrap-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+    <style>
+      .dot {
+        height: 350px;
+        width: 350px;
+        background-color: #C0C0C0;
+        border: solid 10px #FFFFFF;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .col-md-5 {
+        background-color: #ADEFD1FF;
+        color: #00203FFF;
+        height: 100vh;
+      }
+
+      .col-md-7 {
+        background-color: #00203FFF;
+        height: 100vh
+      }
+      .row {
+        position: relative;
+      }
+      #timerContainer, #finishedTimersHeader{
+        margin-top: 75px
+      }
+
+    </style>
+
+  </head>
+{% block main %}
+  <body>
+
+
+    <div class="container-fluid">
+
+      <div class="row">
+
+
+        <div class="col-md-7 row-height align-items-center">
+
+              <div class="row">
+                <div class="col" align="center">
+
+                  <h1 id="timerContainer" style="color:white">00:00:00</h1>
+
+                  <div class="btn-group" role="group" aria-label="Basic example">
+
+                  <button type="button" name="start" id="start" class="btn btn-light mr-1" >START</button>
+                  <br>
+                  <button type="button" name="pause" id="pause" class="btn btn-light mr-1" disabled>PAUSE</button>
+                  <br>
+                  <button type="button" name="resume" id="resume" class="btn btn-light mr-1" disabled>RESUME</button>
+                  <br>
+                  <button type="button" name"stop" id="stop" class="btn btn-light mr-1" disabled>STOP</button>
+                  <br>
+
+                  </div>
+
+                  <form>
+                    <div class="form-group row">
+                      <div class="col-md-6 offset-md-3">
+                        <label for="exampleInputEmail1">Timer name</label>
+                        <input type="text" id ="timerName" class="form-control" aria-describedby="emailHelp" placeholder="Timer name">
+
+                        <label for="exampleInputEmail1">Project</label>
+                        <input type="text" id ="projectName" class="form-control" aria-describedby="emailHelp" placeholder="Project name">
+                      </div>
+                    </div>
+                      <!--<input type="text", id="timerName"></input>-->
+                  </form>
+              </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-5 row-height">
+          <div class="timerList">
+            <h3 id="finishedTimersHeader">
+              You have no finished timers
+            </h3>
+            <ul id="timersList" class="list-group">
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+
+    // array to store completed timers
+    var finishedTimers = {};
+
+    // blueprint of the timer object - needs to be refactored to include methods as part of the object
+    var timerBlueprint = {
+      totalTime: 0,
+      currentTime: 0,
+      startTime: null,
+      paused: true,
+      started: false,
+    };
+
+    function formatTime(seconds){
+      var hours = Math.floor(seconds/3600);
+      var minutes = Math.floor(((seconds % 3600)/60));
+      var secs = seconds - (hours * 3600) - (minutes * 60);
+
+      let times = [hours, minutes, secs];
+
+      var result = "";
+
+      for(var key in times){
+        if (String(times[key]).length == 2){
+        result += String(times[key]) + ":";
+      }
+      else{
+        result += "0" + String(times[key]) + ":";
+      }
+    }
+    result = result.slice(0, -1);
+    return result;
+  }
+
+
+    $(document).ready(function(){
+
+      document.getElementById("start").onclick = function(){
+        timerBlueprint.paused = false;
+        timerBlueprint.started = true;
+        timerBlueprint.startTime = Date.now();
+        document.getElementById('pause').disabled = false;
+        document.getElementById('stop').disabled = false;
+      }
+
+      document.getElementById("pause").onclick = function(){
+        timerBlueprint.paused = true;
+        timerBlueprint.pauseTime = Date.now();
+        timerBlueprint.totalTime = timerBlueprint.totalTime + timerBlueprint.currentTime;
+        document.getElementById('resume').disabled = false;
+      }
+
+      document.getElementById("resume").onclick = function(){
+        timerBlueprint.paused = false;
+        timerBlueprint.startTime = Date.now();
+        document.getElementById('resume').disabled = true;
+      }
+
+      document.getElementById("stop").onclick = function(){
+
+        // stop timer counting and update total time
+        timerBlueprint.paused = true;
+        timerBlueprint.totalTime = timerBlueprint.totalTime + timerBlueprint.currentTime;
+
+        // add timer to list of timers to display
+        var timerName = document.getElementById('timerName').value;
+        finishedTimers[timerName] = formatTime(timerBlueprint.totalTime);
+
+        // reset all properties of the timer
+        timerBlueprint.totalTime = 0;
+        timerBlueprint.currentTime = 0;
+        timerBlueprint.startTime = null;
+        timerBlueprint.started = false;
+
+        // reset the timer display and prep list of completed tasks
+        $('#timerContainer').html("<h1>00:00:00</h1>");
+        document.getElementById("finishedTimersHeader").innerHTML = "Completed tasks";
+        document.getElementById("timersList").innerHTML += ("<li class=\"list-group-item\">" + timerName + "<br>" + finishedTimers[timerName] + "</li>");
+
+        // grey out buttons appropriately
+        document.getElementById('pause').disabled = true;
+        document.getElementById('resume').disabled = true;
+        document.getElementById('stop').disabled = true;
+      }
+
+      // increment timer when it is running and not paused
+      setInterval(function(){
+        if(timerBlueprint.paused == false && timerBlueprint.started == true){ // check if the timer is meant to be running
+          var delta = Date.now() - timerBlueprint.startTime; // milliseconds elapsed since start
+          timerBlueprint.currentTime = Math.floor(delta/1000); // in seconds
+
+          // modify this to display the timer in the correct div as opposed to just printing it to the console
+          var toDisplay = formatTime(timerBlueprint.totalTime + timerBlueprint.currentTime)
+          $('#timerContainer').html('<h1>' + toDisplay + '</h1>');
+
+        }
+      }, 1000); // update every second
+
+    });
+
+    </script>
+
+
+  </body>
+{% endblock %}
+</html>

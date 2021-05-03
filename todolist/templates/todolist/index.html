@@ -1,0 +1,18 @@
+<<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <h1>This is the test1 route</h1>
+
+    {% if tasks %}
+    <ul>
+      {% for task in tasks %}
+        <li>{{task.item}}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </body>
+</html>
