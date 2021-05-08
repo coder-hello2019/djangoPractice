@@ -11,5 +11,7 @@ def register(request):
         # populate form with data from the request
         form = registrationForm(request.POST)
         if form.is_valid():
-            return HttpResponse('Thx')
+            return HttpResponse(form.cleaned_data['password1'])
+        else:
+            return HttpResponse('Form not valid')
             #return render(request, 'redirected.html', context={'username': form})
