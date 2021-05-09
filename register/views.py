@@ -21,3 +21,6 @@ def register(request):
         else:
             return HttpResponse(f'Form not valid: {form.errors}')
             #return render(request, 'redirected.html', context={'username': form})
+
+def hello(request):
+    return HttpResponse("Successfully logged in!")
