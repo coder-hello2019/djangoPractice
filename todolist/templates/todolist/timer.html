@@ -96,6 +96,15 @@
             </h3>
             <ul id="timersList" class="list-group">
             </ul>
+
+            {% if request.user.is_authenticated%}
+              <br>
+              <button type="button" name="save" id="save" class="btn btn-light mr-1" >SAVE</button>
+
+            {% else %}
+              <h2>Create an account or login to save progress.</h2>
+            {% endif %}
+
           </div>
         </div>
       </div>
@@ -185,6 +194,17 @@
         document.getElementById('pause').disabled = true;
         document.getElementById('resume').disabled = true;
         document.getElementById('stop').disabled = true;
+      }
+
+      document.getElementById('save').onclick = function(){
+        console.log("Save button pressed");
+        $.ajax({
+          type: "POST",
+          url: "save",
+          data: {
+            'completedTasks': JSON.stringify(finishedTimers),
+          },
+        });
       }
 
       // increment timer when it is running and not paused

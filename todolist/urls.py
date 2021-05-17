@@ -9,5 +9,6 @@ urlpatterns = [
     path('list', views.showList, name='showList'),
     path('timer', views.timer, name='timer'),
     path('reqtest', views.reqTest, name='reqTest'),
-    path('processRequest', views.processRequest, name='processRequest')
+    path('processRequest', views.processRequest, name='processRequest'),
+    path('save', views.save, name='save')
 ]
