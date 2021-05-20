@@ -40,7 +40,8 @@ def processRequest(request):
 def save(request):
     finishedTimers = json.loads(request.POST['completedTasks'])
     for itemi in finishedTimers:
-        newTodo = todoList(item = itemi, userID=request.user)
+        hours, minutes, seconds = finishedTimers[itemi].split(':')
+        newTodo = todoList(item = itemi, userID=request.user, duration = timedelta(hours=hours, minutes=minutes, seconds=seconds))
         newTodo.save()
 
     # if request.method == 'POST':
