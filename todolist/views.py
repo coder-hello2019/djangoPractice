@@ -6,8 +6,12 @@ from django.views.decorators.csrf import csrf_exempt
 from todolist.models import todoList
 
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
+from datetime import timedelta
 import json
+
+from .helpers import *
 
 # Create your views here.
 def index(request):
@@ -40,10 +44,19 @@ def processRequest(request):
 def save(request):
     finishedTimers = json.loads(request.POST['completedTasks'])
     for itemi in finishedTimers:
-        hours, minutes, seconds = finishedTimers[itemi].split(':')
+        processedTimes = processTime(finishedTimers[itemi])
+        hours, minutes, seconds = processedTimes['hours'], processedTimes['minutes'], processedTimes['seconds']
         newTodo = todoList(item = itemi, userID=request.user, duration = timedelta(hours=hours, minutes=minutes, seconds=seconds))
         newTodo.save()
 
     # if request.method == 'POST':
     #     newTask = request.POST['completedTasks']
     return HttpResponse("Save has been called")
+
+@login_required
+def viewEntries(request):
+    testList = []
+    for item in todoList.objects.all():
+        if item.userID == request.user:
+            testList.append(item.item)
+    return HttpResponse(testList)

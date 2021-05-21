@@ -10,5 +10,6 @@ urlpatterns = [
     path('timer', views.timer, name='timer'),
     path('reqtest', views.reqTest, name='reqTest'),
     path('processRequest', views.processRequest, name='processRequest'),
-    path('save', views.save, name='save')
+    path('save', views.save, name='save'),
+    path('viewEntries', views.viewEntries, name='viewEntries')
 ]
