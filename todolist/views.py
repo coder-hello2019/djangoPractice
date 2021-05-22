@@ -58,5 +58,7 @@ def viewEntries(request):
     testList = []
     for item in todoList.objects.all():
         if item.userID == request.user:
-            testList.append(item.item)
-    return HttpResponse(testList)
+            #testList.append(item.duration)
+            testList.append(item)
+
+    return render(request, 'viewEntries.html', context={'timerEntries': testList})
