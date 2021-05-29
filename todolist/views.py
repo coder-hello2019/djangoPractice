@@ -15,7 +15,9 @@ from .helpers import *
 
 # Create your views here.
 def index(request):
-    return render(request, 'timer.html')
+    availableProjects = set([item.associatedProject for item in todoList.objects.all() if item.userID == request.user])
+
+    return render(request, 'timer.html', context={'availableProjects': availableProjects})
     #return HttpResponse("Hello Django!")
 
 def test1(request):
@@ -44,9 +46,9 @@ def processRequest(request):
 def save(request):
     finishedTimers = json.loads(request.POST['completedTasks'])
     for itemi in finishedTimers:
-        processedTimes = processTime(finishedTimers[itemi])
+        processedTimes = processTime(finishedTimers[itemi][0])
         hours, minutes, seconds = processedTimes['hours'], processedTimes['minutes'], processedTimes['seconds']
-        newTodo = todoList(item = itemi, userID=request.user, duration = timedelta(hours=hours, minutes=minutes, seconds=seconds))
+        newTodo = todoList(item = itemi, userID=request.user, duration = timedelta(hours=hours, minutes=minutes, seconds=seconds), associatedProject=finishedTimers[itemi][1])
         newTodo.save()
 
     # if request.method == 'POST':

@@ -1,5 +1,5 @@
 <html>
-</<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
@@ -10,8 +10,7 @@
 
 
     <!-- Include Bootstrap-->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
     <style>
       .dot {
@@ -79,8 +78,29 @@
                         <label for="exampleInputEmail1">Timer name</label>
                         <input type="text" id ="timerName" class="form-control" aria-describedby="emailHelp" placeholder="Timer name">
 
-                        <label for="exampleInputEmail1">Project</label>
-                        <input type="text" id ="projectName" class="form-control" aria-describedby="emailHelp" placeholder="Project name">
+                        {% if availableProjects|length == 0 %}
+                          <label for="exampleInputEmail1">Project</label>
+                          <input type="text" id ="projectName" class="form-control" aria-describedby="emailHelp" placeholder="Project name">
+                        {% elif availableProjects|length == 1 and availableProjects.0 == "No Project" %}
+                          <label for="exampleInputEmail1">Project</label>
+                          <input type="text" id ="projectName" class="form-control" aria-describedby="emailHelp" placeholder="Project name">
+                        {% else %}
+                          <br>
+                          <!--<select class="form-control" name="projects" id="projects">
+                            {% for item in availableProjects %}
+                            <option value={{item}}>{{item}}</option>
+                            {% endfor %}
+                          </select>-->
+
+                          <input type="text" list="projects" class="form-control" id="projectsList"/>
+                          <datalist id="projects">
+                            {% for item in availableProjects %}
+                            <option value={{item}}>{{item}}</option>
+                            {% endfor %}
+                          </datalist>
+                        {% endif %}
+
+
                       </div>
                     </div>
                       <!--<input type="text", id="timerName"></input>-->
@@ -178,7 +198,20 @@
 
         // add timer to list of timers to display
         var timerName = document.getElementById('timerName').value;
-        finishedTimers[timerName] = formatTime(timerBlueprint.totalTime);
+        finishedTimers[timerName] = [formatTime(timerBlueprint.totalTime)];
+
+        // the 'try' statement allows us to accommodate the two options for the project box
+        try {
+          var timerProjectTextbox = document.getElementById('projectName').value;
+          finishedTimers[timerName].push(timerProjectTextbox);
+          console.log(finishedTimers);
+        }
+        catch {
+          var timerProjectSelect = document.getElementById('projectsList').value;
+          console.log(timerProjectSelect);
+          finishedTimers[timerName].push(timerProjectSelect);
+          console.log(JSON.stringify(finishedTimers));
+        }
 
         // reset all properties of the timer
         timerBlueprint.totalTime = 0;
@@ -189,7 +222,7 @@
         // reset the timer display and prep list of completed tasks
         $('#timerContainer').html("<h1>00:00:00</h1>");
         document.getElementById("finishedTimersHeader").innerHTML = "Completed tasks";
-        document.getElementById("timersList").innerHTML += ("<li class=\"list-group-item\">" + timerName + "<br>" + finishedTimers[timerName] + "</li>");
+        document.getElementById("timersList").innerHTML += ("<li class=\"list-group-item\">" + timerName + "<br>" + finishedTimers[timerName][0] + "</li>");
 
         // grey out buttons appropriately
         document.getElementById('pause').disabled = true;
