@@ -5,8 +5,18 @@
     <title>Timer entries</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
+
+
+
   <body>
+    <div>
+      <h1>Summary of your current projects</h1>
+      <div style="position:static; top:60px; left:10px; width:500px; height:500px;">
+      <canvas id="myChart" width="50" height="50"></canvas>
+      </div>
+    </div>
     <table class="table table-hover">
       <tr>
         <th>Activity</th>
@@ -14,7 +24,7 @@
         <th>Entry time</th>
         <th>Project</th>
       </tr>
-      {% for item in timerEntries %}
+      {% for item in allEntries %}
         <tr>
           <td>{{item.item}}</td>
           <td>{{item.duration}}</td>
@@ -22,6 +32,55 @@
           <td>{{item.associatedProject}}</td>
         </tr>
       {% endfor %}
+
+      {% for key, value in json.allProjectsDict %}
+        <li>{{hello}}</li>
+      {% endfor %}
+
+      {{allProjectsDict.woopity}}
     </table>
   </body>
+
+
+  <script>
+
+  // to delete
+  var a = "{{allProjectsDict}}";
+  console.log(a);
+
+  {% for key, value in allProjectsDict.items %}
+    var b = "{{key}}";
+    console.log("Key " + b);
+    var c = "{{value}}";
+    console.log("Value " + c);
+  {% endfor %}
+
+  const labels = [
+'Coding',
+'Studying',
+'Holiday',
+];
+const data = {
+labels: labels,
+datasets: [{
+  label: 'My First dataset',
+  backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f"],
+  data: [1,2,7],
+}]
+};
+
+
+const config = {
+type: 'pie',
+data,
+options: {}
+};
+
+var ctx = document.getElementById("myChart").getContext("2d");
+
+var myChart = new Chart(
+    ctx,
+    config
+  );
+  </script>
 </html>

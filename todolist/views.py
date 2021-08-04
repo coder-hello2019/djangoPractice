@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
 from datetime import timedelta
+import datetime
 import json
 
 from .helpers import *
@@ -58,9 +59,19 @@ def save(request):
 @login_required
 def viewEntries(request):
     testList = []
+    today = datetime.date.today()
+
+    # list of all project available for this user
+    allProjects = todoList.objects.all().filter(userID_id=request.user).order_by().values_list('associatedProject').distinct()
+
+    # item[0] is needed because the items in allProjects are tuples
+    allProjectsDict = {item[0]: 0 for item in allProjects}
+
+    # create a list of every single entry that the user has ever made (here narrowing down to just this month - build out this functionality)
     for item in todoList.objects.all():
-        if item.userID == request.user:
+        if item.userID == request.user and item.entryTime.month == today.month:
             #testList.append(item.duration)
             testList.append(item)
+            allProjectsDict[item.associatedProject] += 1
 
-    return render(request, 'viewEntries.html', context={'timerEntries': testList})
+    return render(request, 'viewEntries.html', context={'allEntries': testList, 'allProjectsDict': allProjectsDict})
