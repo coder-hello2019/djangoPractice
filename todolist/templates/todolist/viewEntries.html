@@ -38,49 +38,57 @@
       {% endfor %}
 
       {{allProjectsDict.woopity}}
+      {{mostCommonEntries}}
     </table>
   </body>
 
 
   <script>
 
-  // to delete
-  var a = "{{allProjectsDict}}";
-  console.log(a);
+    // to delete
+    var a = "{{allProjectsDict}}";
+    console.log(a);
 
-  {% for key, value in allProjectsDict.items %}
-    var b = "{{key}}";
-    console.log("Key " + b);
-    var c = "{{value}}";
-    console.log("Value " + c);
-  {% endfor %}
+    const labels = [];
+    const datapoints = [];
 
-  const labels = [
-'Coding',
-'Studying',
-'Holiday',
-];
-const data = {
-labels: labels,
-datasets: [{
-  label: 'My First dataset',
-  backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f"],
-  data: [1,2,7],
-}]
-};
+    {% for key, value in allProjectsDict.items %}
+      var key = "{{key}}";
+      var val = "{{value}}";
+
+      if(val > 0){
+        labels.push(key);
+        datapoints.push(val);
+      }
+
+    {% endfor %}
 
 
-const config = {
-type: 'pie',
-data,
-options: {}
-};
+    const data = {
+    labels: labels,
+    datasets: [{
+      label: 'My First dataset',
+      backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f", "#2B1C2F", "#CBB89A", "#C23B22", "#F76C6C"],
+      data: datapoints,
+    }]
+    };
 
-var ctx = document.getElementById("myChart").getContext("2d");
+    const config = {
+    type: 'pie',
+    data,
+    options: {
+      title: {
+        display: true,
+        text: 'Distribution by project',
+      }
+    }
+    };
 
-var myChart = new Chart(
-    ctx,
-    config
-  );
+    var ctx = document.getElementById("myChart").getContext("2d");
+
+    var myChart = new Chart(
+        ctx,
+        config
+      );
   </script>
 </html>

@@ -64,14 +64,24 @@ def viewEntries(request):
     # list of all project available for this user
     allProjects = todoList.objects.all().filter(userID_id=request.user).order_by().values_list('associatedProject').distinct()
 
+    # turn the list of projects into a dict of project names and the number of times an entry is made for this project
     # item[0] is needed because the items in allProjects are tuples
     allProjectsDict = {item[0]: 0 for item in allProjects}
 
+    # list of all time time entry texts (we don't want these to be distinct because we're collecting these items to then calculate the frequency of words used)
+    # flat=True ensures that we get a list of strings rather than tuples
+    allItems = todoList.objects.all().filter(userID_id=request.user).order_by().values_list('item', flat=True)
+
+    # find the most frequently used words
+    mostCommonEntries = findMostCommonWords(allItems)
+
     # create a list of every single entry that the user has ever made (here narrowing down to just this month - build out this functionality)
     for item in todoList.objects.all():
-        if item.userID == request.user and item.entryTime.month == today.month:
+        if item.userID == request.user:
+        #if item.userID == request.user and item.entryTime.month == today.month:
             #testList.append(item.duration)
             testList.append(item)
-            allProjectsDict[item.associatedProject] += 1
+            # record how much time in seconds was spent on each project
+            allProjectsDict[item.associatedProject] += item.duration.seconds
 
-    return render(request, 'viewEntries.html', context={'allEntries': testList, 'allProjectsDict': allProjectsDict})
+    return render(request, 'viewEntries.html', context={'allEntries': testList, 'allProjectsDict': allProjectsDict, 'mostCommonEntries': mostCommonEntries})
