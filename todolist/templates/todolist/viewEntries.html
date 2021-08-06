@@ -14,7 +14,8 @@
     <div>
       <h1>Summary of your current projects</h1>
       <div style="position:static; top:60px; left:10px; width:500px; height:500px;">
-      <canvas id="myChart" width="50" height="50"></canvas>
+      <canvas id="myChart1" width="50" height="50"></canvas>
+      <canvas id="myChart2" width="50" height="50"></canvas>
       </div>
     </div>
     <table class="table table-hover">
@@ -45,37 +46,34 @@
 
   <script>
 
-    // to delete
-    var a = "{{allProjectsDict}}";
-    console.log(a);
-
-    const labels = [];
-    const datapoints = [];
+    // data and display for the projects-proportionality pie chart
+    const labels1 = [];
+    const datapoints1 = [];
 
     {% for key, value in allProjectsDict.items %}
       var key = "{{key}}";
       var val = "{{value}}";
 
       if(val > 0){
-        labels.push(key);
-        datapoints.push(val);
+        labels1.push(key);
+        datapoints1.push(val);
       }
 
     {% endfor %}
 
 
-    const data = {
-    labels: labels,
+    const data1 = {
+    labels: labels1,
     datasets: [{
       label: 'My First dataset',
       backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f", "#2B1C2F", "#CBB89A", "#C23B22", "#F76C6C"],
-      data: datapoints,
+      data: datapoints1,
     }]
     };
 
-    const config = {
+    const config1 = {
     type: 'pie',
-    data,
+    data: data1,
     options: {
       title: {
         display: true,
@@ -84,11 +82,52 @@
     }
     };
 
-    var ctx = document.getElementById("myChart").getContext("2d");
+    var ctx1 = document.getElementById("myChart1").getContext("2d");
 
-    var myChart = new Chart(
-        ctx,
-        config
-      );
+    var myChart1 = new Chart(
+        ctx1,
+        config1
+    );
+
+    // data and display for the task frequency bar chart
+    const labels2 = [];
+    const datapoints2 = [];
+
+    {% for key, value in mostCommonEntries.items %}
+      var key = "{{key}}";
+      var val = "{{value}}";
+      labels2.push(key);
+      datapoints2.push(val);
+    {% endfor %}
+
+    console.log(labels2, datapoints2);
+    const data2 = {
+    labels: labels2,
+    datasets: [{
+      label: 'My First dataset',
+      backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f", "#2B1C2F", "#CBB89A", "#C23B22", "#F76C6C"],
+      data: datapoints2,
+    }]
+    };
+
+    const config2 = {
+    type: 'bar',
+    data: data2,
+    options: {
+      title: {
+        display: true,
+        text: 'Most frequently tasks',
+      }
+    }
+    };
+
+    var ctx2 = document.getElementById("myChart2").getContext("2d");
+
+    var myChart2 = new Chart(
+        ctx2,
+        config2
+    );
+
+
   </script>
 </html>
