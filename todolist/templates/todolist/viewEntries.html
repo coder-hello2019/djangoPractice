@@ -6,41 +6,69 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!--Include bootstrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+    <style>
+
+    .table-style{
+      margin-top: 50px;
+      margin-left: 100px;
+      margin-right: 100px;
+    }
+    </style>
   </head>
 
+  {% extends "base.html" %}
 
-
-  <body>
+  {% block content %}
+  <body style="background-color:#EDEAE5">
     <div>
-      <h1>Summary of your current projects</h1>
+      <h1 style="text-align:center; margin-bottom: 50px; margin-top: 50px;">Summary of your current projects</h1>
+
+      <!--
       <div style="position:static; top:60px; left:10px; width:500px; height:500px;">
       <canvas id="myChart1" width="50" height="50"></canvas>
       <canvas id="myChart2" width="50" height="50"></canvas>
+    </div>-->
+
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <canvas id="myChart1" width="50" height="50"></canvas>
+          </div>
+          <div class="col">
+            <canvas id="myChart2" width="50" height="50"></canvas>
+          </div>
+        </div>
       </div>
     </div>
-    <table class="table table-hover">
-      <tr>
-        <th>Activity</th>
-        <th>Duration</th>
-        <th>Entry time</th>
-        <th>Project</th>
-      </tr>
-      {% for item in allEntries %}
+
+    <div class="table-style">
+      <table class="table table-hover">
         <tr>
-          <td>{{item.item}}</td>
-          <td>{{item.duration}}</td>
-          <td>{{item.entryTime}}</td>
-          <td>{{item.associatedProject}}</td>
+          <th>Activity</th>
+          <th>Duration</th>
+          <th>Entry time</th>
+          <th>Project</th>
         </tr>
-      {% endfor %}
+        {% for item in allEntries %}
+          <tr>
+            <td>{{item.item}}</td>
+            <td>{{item.duration}}</td>
+            <td>{{item.entryTime}}</td>
+            <td>{{item.associatedProject}}</td>
+          </tr>
+        {% endfor %}
 
-      {% for key, value in json.allProjectsDict %}
-        <li>{{hello}}</li>
-      {% endfor %}
+        {% for key, value in json.allProjectsDict %}
+          <li>{{hello}}</li>
+        {% endfor %}
 
-      {{allProjectsDict.woopity}}
-      {{mostCommonEntries}}
-    </table>
+      </table>
+    </div>
+
   </body>
 
 
@@ -65,7 +93,7 @@
     const data1 = {
     labels: labels1,
     datasets: [{
-      label: 'My First dataset',
+      label: 'Distribution by project',
       backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f", "#2B1C2F", "#CBB89A", "#C23B22", "#F76C6C"],
       data: datapoints1,
     }]
@@ -104,7 +132,7 @@
     const data2 = {
     labels: labels2,
     datasets: [{
-      label: 'My First dataset',
+      label: 'Most frequently done tasks',
       backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f", "#2B1C2F", "#CBB89A", "#C23B22", "#F76C6C"],
       data: datapoints2,
     }]
@@ -130,4 +158,6 @@
 
 
   </script>
+
+  {% endblock %}
 </html>
