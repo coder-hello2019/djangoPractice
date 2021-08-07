@@ -85,3 +85,6 @@ def viewEntries(request):
             allProjectsDict[item.associatedProject] += item.duration.seconds
 
     return render(request, 'viewEntries.html', context={'allEntries': testList, 'allProjectsDict': allProjectsDict, 'mostCommonEntries': mostCommonEntries})
+
+def updateDiagrams(request):
+    pass

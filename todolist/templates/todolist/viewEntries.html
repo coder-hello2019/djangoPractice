@@ -1,23 +1,30 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
+    <!-- Required meta tags -->
     <meta charset="utf-8">
-    <title>Timer entries</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   <!-- Include Bootstrap -->
+   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <!--Include bootstrap-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
 
-    <style>
+  <title>Timer entries</title>
 
-    .table-style{
-      margin-top: 50px;
-      margin-left: 100px;
-      margin-right: 100px;
-    }
-    </style>
+  <!-- Include charts.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+
+  .table-style{
+    margin-top: 50px;
+    margin-left: 100px;
+    margin-right: 100px;
+  }
+  </style>
   </head>
 
   {% extends "base.html" %}
@@ -26,12 +33,26 @@
   <body style="background-color:#EDEAE5">
     <div>
       <h1 style="text-align:center; margin-bottom: 50px; margin-top: 50px;">Summary of your current projects</h1>
+    </div>
 
       <!--
       <div style="position:static; top:60px; left:10px; width:500px; height:500px;">
       <canvas id="myChart1" width="50" height="50"></canvas>
       <canvas id="myChart2" width="50" height="50"></canvas>
     </div>-->
+    <div class="row" style="margin-bottom: 50px">
+      <div class="col-md-6" style="text-align:right">
+        <p>Display data by: </p>
+      </div>
+      <div class="col-md-4">
+        <input type="text" list="timeSpans" class="form-control" id="timeSpansList"/>
+        <datalist id="timeSpans">
+          <option value=allTime>All time</option>
+          <option value=thisMonth>This month</option>
+        </datalist>
+      </div>
+      <div class="col-md-2"></div>
+    </div>
 
       <div class="container">
         <div class="row">
@@ -43,7 +64,6 @@
           </div>
         </div>
       </div>
-    </div>
 
     <div class="table-style">
       <table class="table table-hover">
@@ -68,6 +88,10 @@
 
       </table>
     </div>
+
+<br>
+<br>
+<br>
 
   </body>
 
@@ -155,6 +179,14 @@
         ctx2,
         config2
     );
+
+    // script for fetching data from the views through ajax for updating the timespan for which data is displayed
+    document.getElementById("timeSpansList").onchange = function(){
+      // send ajax request to views from here and update charts
+      var variable = document.getElementById("timeSpansList").value
+
+      // make get call to ajax to filter data for the specified timespan
+    };
 
 
   </script>
