@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 from django.views.decorators.csrf import csrf_exempt
 
@@ -7,6 +7,9 @@ from todolist.models import todoList
 
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+
+# delete if not needed
+from django.core import serializers
 
 from datetime import timedelta
 import datetime
@@ -58,33 +61,73 @@ def save(request):
 
 @login_required
 def viewEntries(request):
-    testList = []
+
+    # fetch all user data to display, with the default of all time for the timespan
+    allEntriesList, allProjectsDict, mostCommonEntries = fetchAllUserData(request, timespan = 'allTime')
+
+    return render(request, 'viewEntries.html', context={'allEntries': allEntriesList, 'allProjectsDict': allProjectsDict, 'mostCommonEntries': mostCommonEntries})
+
+@csrf_exempt
+def updateDiagrams(request):
+
+    timespan = request.POST.get('timespan')
+    """
+    if timespan == 'allTime':
+        return HttpResponse("All time works fine")
+    elif timespan == 'thisMonth':
+        return HttpResponse("This month works fine")
+    else:
+        return HttpResponse("Nothing bloody works")
+    """
+    allEntriesList, allProjectsDict, mostCommonEntries = fetchAllUserData(request, timespan)
+
+    # allEntriesList = list of todolist objects - THIS IS THE BIT THAT IS CAUSING PROBLEMS
+    # allProjectsDict = dict of strings and ints
+    # mostCommonEntries = dict of strings and ints
+
+    #returnData = {'allEntriesList': serializers.serializer(allEntriesList), 'allProjectsDict': allProjectsDict, 'mostCommonEntries': mostCommonEntries}
+    returnData = {'allEntriesList': serializers.serialize("json", allEntriesList), 'allProjectsDict': allProjectsDict, 'mostCommonEntries': mostCommonEntries}
+    print(type(allEntriesList))
+    # this refreshes the page - ideally we would do this in place without a refresh
+
+    return JsonResponse(returnData)
+
+    #return HttpResponse(timespan)
+    #return render(request, 'viewEntries.html', context={'allEntries': allEntriesList, 'allProjectsDict': allProjectsDict, 'mostCommonEntries': mostCommonEntries})
+
+
+# THESE ARE NOT VIEWS - JUST HELPER FUNCTIONS. MOVE THEM TO HELPERS.PY FILE
+def fetchAllUserData(request, timespan):
     today = datetime.date.today()
 
-    # list of all project available for this user
-    allProjects = todoList.objects.all().filter(userID_id=request.user).order_by().values_list('associatedProject').distinct()
+    # ALL USER DATA
+    # fetch user data for just this month
+    if timespan != 'allTime':
+        allUserData = todoList.objects.all().filter(userID_id=request.user, entryTime__month = today.month)
+    # or fetch data for all time, depending on user selection
+    else:
+        allUserData = todoList.objects.all().filter(userID_id=request.user)
+    # convert the allUserData queryset into a list
+    allUserEntries = [item for item in allUserData]
 
-    # turn the list of projects into a dict of project names and the number of times an entry is made for this project
-    # item[0] is needed because the items in allProjects are tuples
+    # PROJECTS DATA
+    # create ist of all (distinct) project available for this user
+    allProjects = allUserData.order_by().values_list('associatedProject').distinct()
+
+    # turn projects data into a dictionary
     allProjectsDict = {item[0]: 0 for item in allProjects}
 
-    # list of all time time entry texts (we don't want these to be distinct because we're collecting these items to then calculate the frequency of words used)
+    # record the total amount of time spent on each project
+    for item in allUserData:
+        # record how much time in seconds was spent on each project
+        allProjectsDict[item.associatedProject] += item.duration.seconds
+
+    # MOST FREQUENTLY USED WORDS/DESCRIPTIONS
+    # list of all time entry texts/descriptions (we don't want these to be distinct because we're collecting these items to then calculate the frequency of words used)
     # flat=True ensures that we get a list of strings rather than tuples
-    allItems = todoList.objects.all().filter(userID_id=request.user).order_by().values_list('item', flat=True)
+    allDescriptions = allUserData.order_by().values_list('item', flat=True)
 
     # find the most frequently used words
-    mostCommonEntries = findMostCommonWords(allItems)
+    mostCommonEntries = findMostCommonWords(allDescriptions)
 
-    # create a list of every single entry that the user has ever made (here narrowing down to just this month - build out this functionality)
-    for item in todoList.objects.all():
-        if item.userID == request.user:
-        #if item.userID == request.user and item.entryTime.month == today.month:
-            #testList.append(item.duration)
-            testList.append(item)
-            # record how much time in seconds was spent on each project
-            allProjectsDict[item.associatedProject] += item.duration.seconds
-
-    return render(request, 'viewEntries.html', context={'allEntries': testList, 'allProjectsDict': allProjectsDict, 'mostCommonEntries': mostCommonEntries})
-
-def updateDiagrams(request):
-    pass
+    return (allUserData, allProjectsDict, mostCommonEntries)

@@ -2,6 +2,7 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk import FreqDist
+
 # function to convert input from a js string into chunks that can be passed to the timedelta python object
 
 def processTime(timeString):
@@ -57,8 +58,9 @@ def findMostCommonWords(listOfLists):
 
     return mostCommonFinal
 
+
 def main():
     #processTime("02:30:00")
-    print(findMostCommonWords(testWordList))
+    pass
 
 main()

@@ -7,6 +7,9 @@
 
    <!-- Include Bootstrap -->
    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+   <!-- Include full jQuery - delete if stuff breaks -->
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -45,11 +48,15 @@
         <p>Display data by: </p>
       </div>
       <div class="col-md-4">
-        <input type="text" list="timeSpans" class="form-control" id="timeSpansList"/>
-        <datalist id="timeSpans">
+        <!--<input type="text" list="timeSpans" class="form-control" id="timeSpansList"/>-->
+        <select name="cars" id="timeSpansList" class="form-select">
           <option value=allTime>All time</option>
           <option value=thisMonth>This month</option>
-        </datalist>
+        </select>
+        <!--<datalist id="timeSpans">
+          <option value=allTime>All time</option>
+          <option value=thisMonth>This month</option>
+        </datalist>-->
       </div>
       <div class="col-md-2"></div>
     </div>
@@ -65,6 +72,7 @@
         </div>
       </div>
 
+    <div id="allEntriesTable">
     <div class="table-style">
       <table class="table table-hover">
         <tr>
@@ -72,7 +80,9 @@
           <th>Duration</th>
           <th>Entry time</th>
           <th>Project</th>
+
         </tr>
+
         {% for item in allEntries %}
           <tr>
             <td>{{item.item}}</td>
@@ -88,6 +98,7 @@
 
       </table>
     </div>
+  </div>
 
 <br>
 <br>
@@ -183,9 +194,65 @@
     // script for fetching data from the views through ajax for updating the timespan for which data is displayed
     document.getElementById("timeSpansList").onchange = function(){
       // send ajax request to views from here and update charts
-      var variable = document.getElementById("timeSpansList").value
+      //var timeSpan = "hullo";
+      var timeSpan = document.getElementById("timeSpansList").value
+      //window.open('updateDiagrams');
 
       // make get call to ajax to filter data for the specified timespan
+      $.ajax({
+        type: "POST",
+        url: "updateDiagrams",
+        data: {'timespan': timeSpan},
+        success: function(response){
+          //console.log("The ajax request has succeeded")
+          var receivedEntries = JSON.parse(response['allEntriesList']);
+
+          for(var i = 0; i < receivedEntries.length; i++){
+            console.log(receivedEntries[i]['fields']['item']);
+          }
+
+          var newTableRows = '<div class="table-style"><table class="table table-hover"><tr><th>Activity</th><th>Duration</th><th>Entry time</th><th>Project</th></tr>';
+
+          // update the table displaying all the time entries and their details
+          for(var i = 0; i < receivedEntries.length; i++){
+            var row = '<tr><td>' + receivedEntries[i]['fields']['item'] + '</td>';
+            row += '<td>' + receivedEntries[i]['fields']['duration'] + '</td>';
+            // the format of entryTime needs to be updated
+            row += '<td>' + receivedEntries[i]['fields']['entryTime'] + '</td>';
+            row += '<td>' + receivedEntries[i]['fields']['associatedProject'] + '</td>';
+            row += '</tr>'
+            newTableRows += row;
+          }
+          newTableRows += '</table></div>';
+          document.getElementById("allEntriesTable").innerHTML = newTableRows;
+
+          // update the pie chart
+          var updatedPieLabels = [];
+          var updatedPieData = [];
+
+          for(var key in response['allProjectsDict']){
+            updatedPieLabels.push(key);
+            updatedPieData.push(response['allProjectsDict'][key]);
+          }
+          data1['datasets'][0]['data'] = updatedPieData;
+          data1['labels'] = updatedPieLabels;
+          myChart1.update();
+
+          // update the bar chart
+          var updatedBarLabels = [];
+          var updatedBarData = [];
+
+          for(var key in response['mostCommonEntries']){
+            updatedBarLabels.push(key);
+            updatedBarData.push(response['mostCommonEntries'][key]);
+          }
+
+          data2['datasets'][0]['data'] = updatedBarData;
+          data2['labes'] = updatedBarLabels;
+          myChart2.update();
+        },
+      })
+
     };
 
 

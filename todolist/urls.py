@@ -11,5 +11,6 @@ urlpatterns = [
     path('reqtest', views.reqTest, name='reqTest'),
     path('processRequest', views.processRequest, name='processRequest'),
     path('save', views.save, name='save'),
-    path('viewEntries', views.viewEntries, name='viewEntries')
+    path('viewEntries', views.viewEntries, name='viewEntries'),
+    path('updateDiagrams', views.updateDiagrams, name='updateDiagrams')
 ]
