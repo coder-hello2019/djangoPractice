@@ -133,7 +133,6 @@
 
     {% endfor %}
 
-
     const data1 = {
     labels: labels1,
     datasets: [{
@@ -161,6 +160,36 @@
           }
         }
       },
+      // DELETE IF BREAKS CODE
+      tooltip: {
+        enabled: true,
+        callbacks: {
+        footer: (ttItem) => {
+          let sum = 0;
+          let dataArr = ttItem[0].dataset.data;
+          dataArr.map(data => {
+            sum += Number(data);
+          });
+
+        let percentage = (ttItem[0].parsed * 100 / sum).toFixed(2) + '%';
+        return `Percentage of time spent: ${percentage}`;
+      },
+      label: (ttItem) => {
+
+        let totalSeconds = ttItem.parsed
+        let hours = 0;
+        let minutes = 0;
+        let seconds = 0;
+
+        hours = Math.floor((totalSeconds/3600));
+        minutes = Math.floor((totalSeconds - (hours * 3600))/60);
+        seconds = totalSeconds - (hours * 3600) - (minutes * 60);
+        labelText = hours + "h:" + minutes + "m:" + seconds + "s";
+        return labelText;
+      }
+    }
+  },
+      // DELETE IF BREAKS CODE
     },// closing tag for plugins
     }
     };

@@ -45,9 +45,10 @@ def findMostCommonWords(listOfLists):
     # strip stopwords from text
     stoplist = stopwords.words('english')
 
-    processedList = [word for word in stringToBeProcessed if word not in stoplist]
-    # find most frequently used n words
+    # save all words (in lowercase) to the list to be processed
+    processedList = [word.lower() for word in stringToBeProcessed if word not in stoplist]
 
+    # find most frequently used n words
     wordFrequencies = FreqDist(processedList)
     mostCommon = wordFrequencies.most_common(10)
 

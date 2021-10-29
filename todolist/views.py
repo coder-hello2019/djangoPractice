@@ -111,16 +111,18 @@ def fetchAllUserData(request, timespan):
     allUserEntries = [item for item in allUserData]
 
     # PROJECTS DATA
-    # create ist of all (distinct) project available for this user
+    # create ist of all (distinct) projects available for this user
     allProjects = allUserData.order_by().values_list('associatedProject').distinct()
 
     # turn projects data into a dictionary
     allProjectsDict = {item[0]: 0 for item in allProjects}
 
+    totalSeconds = 0
     # record the total amount of time spent on each project
     for item in allUserData:
         # record how much time in seconds was spent on each project
         allProjectsDict[item.associatedProject] += item.duration.seconds
+        totalSeconds += item.duration.seconds
 
     # MOST FREQUENTLY USED WORDS/DESCRIPTIONS
     # list of all time entry texts/descriptions (we don't want these to be distinct because we're collecting these items to then calculate the frequency of words used)
