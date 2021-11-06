@@ -229,7 +229,7 @@
         //var listOfTimers = "<li class=\"list-group-item\">" + timerName + "<br>" + finishedTimers[timerName][0] + "</li>"
         // create list line items with inline buttons for deleting items from the list before saving
         
-        document.getElementById("timersList").innerHTML += ("<li class=\"list-group-item\" id=\"" + (timerName + "1") + "\">" + timerName + "<br>" + finishedTimers[timerName][0] + "<button type=\"button\" class=\"btn btn-danger\" id=" + timerName + " style=\"float:right\">Delete</button>" + "</li>");
+        document.getElementById("timersList").innerHTML += ("<li class=\"list-group-item\" id=\"" + (timerName.replace(/\s+/g, '') + "1") + "\">" + timerName   + "<br>" + finishedTimers[timerName][0] + "<button type=\"button\" class=\"btn btn-danger\" id=" + timerName.replace(/\s+/g, '') + " style=\"float:right\">Delete</button>" + "</li>");
 
         //document.getElementById("timersList").innerHTML += ("<li class=\"list-group-item\">" + timerName + "<br>" + finishedTimers[timerName][0] + "<button type=\"button\" class=\"btn btn-danger\" id=" + timerName + " style=\"float:right\">Delete</button>" + "</li>");
 
@@ -240,16 +240,10 @@
 
         // enable the clicking on delete buttons and removal of relevant list entries from the list and the view
         for (const [key, value] of Object.entries(finishedTimers)) {
-          document.getElementById(key).onclick = function() {
+          document.getElementById(key.replace(/\s+/g, '')).onclick = function() {
             entriesList = document.getElementById("timersList")
-            //console.log("Entries list child: " + entriesList.firstElementChild)
-            itemToRemove = document.getElementById(key + "1")
-            //console.log("outerHTML of itemToRemove: " + itemToRemove.outerHTML)
-            //console.log(child)
+            itemToRemove = document.getElementById(key.replace(/\s+/g, '') + "1")
             itemToRemove.remove();
-            //entriesList = document.getElementById("timersList")
-            //console.log("entriesList after child deletion: " + entriesList.outerHTML)
-            //entriesList.parentNode.removeChild(child)
 
             // remove timer from finishedTimers
             delete(finishedTimers[key])

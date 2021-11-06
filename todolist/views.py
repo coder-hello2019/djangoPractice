@@ -68,6 +68,10 @@ def viewEntries(request):
     return render(request, 'viewEntries.html', context={'allEntries': allEntriesList, 'allProjectsDict': allProjectsDict, 'mostCommonEntries': mostCommonEntries})
 
 @csrf_exempt
+def deleteEntry(request):
+    return HttpResponse("hello")
+
+@csrf_exempt
 def updateDiagrams(request):
 
     timespan = request.POST.get('timespan')

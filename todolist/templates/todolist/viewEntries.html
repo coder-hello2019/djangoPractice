@@ -33,7 +33,7 @@
   }
 
   .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
-  background-color: aqua;
+  background-color: rgb(4, 75, 133);
 }
 
   </style>
@@ -89,6 +89,7 @@
           <th>Duration</th>
           <th>Entry time</th>
           <th>Project</th>
+          <th></th>
 
         </tr>
 
@@ -98,6 +99,7 @@
             <td>{{item.duration}}</td>
             <td>{{item.entryTime}}</td>
             <td>{{item.associatedProject}}</td>
+            <td><button type="button" class="btn btn-danger" id={{item.id}}>Delete</button></td>
           </tr>
         {% endfor %}
 
@@ -290,7 +292,7 @@
             console.log(receivedEntries[i]['fields']['item']);
           }
 
-          var newTableRows = '<div class="table-style"><table class="table table-hover"><tr><th>Activity</th><th>Duration</th><th>Entry time</th><th>Project</th></tr>';
+          var newTableRows = '<div class="table-style"><table class="table table-hover"><tr><th>Activity</th><th>Duration</th><th>Entry time</th><th>Project</th><th>Delete</th></tr>';
 
           // update the table displaying all the time entries and their details
           for(var i = 0; i < receivedEntries.length; i++){
@@ -299,6 +301,10 @@
             // the format of entryTime needs to be updated
             row += '<td>' + receivedEntries[i]['fields']['entryTime'] + '</td>';
             row += '<td>' + receivedEntries[i]['fields']['associatedProject'] + '</td>';
+            //row += '<td>' + "<p>Button</p>" + '</td>';
+
+            row +=  '<td>' + '<button type=\"button\" class=\"btn btn-danger\">Delete</button>' + '</td>';
+
             row += '</tr>'
             newTableRows += row;
           }
@@ -335,6 +341,17 @@
 
     };
 
+    $(".btn-danger").click(function(){
+      alert("The delete btn of item with id " + this.id + " was clicked.");
+      // send a request to the backend to remove the object with the corresponding id from the database
+      $.ajax({
+        type: "POST",
+        url: "deleteEntry",
+        data: {'entryID': this.id},
+        success: function(response){
+          console.log("success")
+        }});
+    });
 
   </script>
 
