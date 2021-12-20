@@ -12,5 +12,6 @@ urlpatterns = [
     path('processRequest', views.processRequest, name='processRequest'),
     path('save', views.save, name='save'),
     path('viewEntries', views.viewEntries, name='viewEntries'),
-    path('updateDiagrams', views.updateDiagrams, name='updateDiagrams')
+    path('updateDiagrams', views.updateDiagrams, name='updateDiagrams'),
+    path('deleteEntry', views.deleteEntry, name='deleteEntry')
 ]

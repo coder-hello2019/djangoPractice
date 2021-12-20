@@ -69,7 +69,14 @@ def viewEntries(request):
 
 @csrf_exempt
 def deleteEntry(request):
-    return HttpResponse("hello")
+
+    # delete corresponding entry from the model/database
+    entryToDelete = todoList.objects.get(id = request.POST.get('entryID'))
+    entryToDelete.delete()
+
+    return HttpResponse(200)
+    #return render(request, 'viewEntries.html', context={'allEntries': allEntriesList, 'allProjectsDict': allProjectsDict, 'mostCommonEntries': mostCommonEntries})
+
 
 @csrf_exempt
 def updateDiagrams(request):

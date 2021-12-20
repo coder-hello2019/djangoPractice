@@ -341,7 +341,9 @@
 
     };
 
-    $(".btn-danger").click(function(){
+    // this had to be updated so that the delete buttons work with the .load function- https://stackoverflow.com/questions/9009364/jquery-load-makes-content-not-clickable-after-load?rq=1
+    //$(".btn-danger").click(function(){
+    $(document).on("click",".btn-danger", function(){
       alert("The delete btn of item with id " + this.id + " was clicked.");
       // send a request to the backend to remove the object with the corresponding id from the database
       $.ajax({
@@ -350,7 +352,9 @@
         data: {'entryID': this.id},
         success: function(response){
           console.log("success")
-        }});
+          $('#allEntriesTable').load(' #allEntriesTable > *');
+        }
+      });
     });
 
   </script>
