@@ -339,56 +339,6 @@
         data: {'timespan': timeSpan},
         success: function(response){
           updateDataView(response)
-          // var receivedEntries = JSON.parse(response['allEntriesList']);
-         
-          // var newTableRows = '<div class="table-style"><table class="table table-hover"><tr><th>Activity</th><th>Duration</th><th>Entry time</th><th>Project</th><th>Delete</th></tr>';
-
-          // // update the table displaying all the time entries and their details
-          // for(var i = 0; i < receivedEntries.length; i++){
-
-          //   var itemID = receivedEntries[i]['pk']
-
-          //   var row = '<tr><td>' + receivedEntries[i]['fields']['item'] + '</td>';
-          //   row += '<td>' + receivedEntries[i]['fields']['duration'] + '</td>';
-          //   // the format of entryTime needs to be updated
-          //   row += '<td>' + receivedEntries[i]['fields']['entryTime'] + '</td>';
-          //   row += '<td>' + receivedEntries[i]['fields']['associatedProject'] + '</td>';
-          //   //row += '<td>' + "<p>Button</p>" + '</td>';
-            
-          //   // row +=  '<td>' + '<button type=\"button\" class=\"btn btn-danger\">Delete</button>' + '</td>';
-          //   row +=  '<td>' + '<button type=\"button\" class=\"btn btn-danger\" id=\"' + itemID + '\">Delete</button>' + '</td>';
-
-          //   row += '</tr>'
-          //   newTableRows += row;
-          // }
-          // newTableRows += '</table></div>';
-          // document.getElementById("allEntriesTable").innerHTML = newTableRows;
-
-          // // update the pie chart
-          // var updatedPieLabels = [];
-          // var updatedPieData = [];
-
-          // for(var key in response['allProjectsDict']){
-          //   updatedPieLabels.push(key);
-          //   updatedPieData.push(response['allProjectsDict'][key]);
-          // }
-          // data1['datasets'][0]['data'] = updatedPieData;
-          // data1['labels'] = updatedPieLabels;
-          // myChart1.update();
-
-          // // update the bar chart
-          // var updatedBarLabels = [];
-          // var updatedBarData = [];
-
-          // for(var key in response['mostCommonEntries']){
-          //   updatedBarLabels.push(key);
-          //   updatedBarData.push(response['mostCommonEntries'][key]);
-          // }
-
-          // data2['datasets'][0]['data'] = updatedBarData;
-          // data2['labes'] = updatedBarLabels;
-          // myChart2.update();
-
         },
       })
 
@@ -398,14 +348,16 @@
     //$(".btn-danger").click(function(){
     $(document).on("click",".btn-danger", function(){
       alert("The delete btn of item with id " + this.id + " was clicked.");
+      var timeSpan = document.getElementById("timeSpansList").value
       // send a request to the backend to remove the object with the corresponding id from the database
       $.ajax({
         type: "POST",
         url: "deleteEntry",
-        data: {'entryID': this.id},
+        data: {'entryID': this.id, 'timespan': timeSpan},
         success: function(response){
           console.log("success")
-          $('#allEntriesTable').load(' #allEntriesTable > *');
+          updateDataView(response)
+          //$('#allEntriesTable').load(' #allEntriesTable > *');
         }
       });
     });

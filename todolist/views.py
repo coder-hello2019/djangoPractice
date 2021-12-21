@@ -73,24 +73,33 @@ def deleteEntry(request):
 
     # delete corresponding entry from the model/database
     entryToDelete = todoList.objects.get(id = request.POST.get('entryID'))
-    entryToDelete.delete()
+    deletion = entryToDelete.delete()
 
-    return HttpResponse(200)
-    #return render(request, 'viewEntries.html', context={'allEntries': allEntriesList, 'allProjectsDict': allProjectsDict, 'mostCommonEntries': mostCommonEntries})
+    # check if deletion successful; if yes, return an updated list of timers and pie + bar charts to the frontend, else return error
+    if deletion[0] != 1:
+        return HttpResponse('<h1>Page was found</h1>')
+    # if deletion successful:
+        # call updatediagrams to fetch updated data from the db
+        # return that data to the frontned so that the table and diagrams can be refreshed
+    else:
+        timespan = request.POST.get('timespan')
+
+        allEntriesList, allProjectsDict, mostCommonEntries = fetchAllUserData(request, timespan)
+
+        # allEntriesList = list of todolist objects - THIS IS THE BIT THAT IS CAUSING PROBLEMS
+        # allProjectsDict = dict of strings and ints
+        # mostCommonEntries = dict of strings and ints
+
+        returnData = {'allEntriesList': serializers.serialize("json", allEntriesList), 'allProjectsDict': allProjectsDict, 'mostCommonEntries': mostCommonEntries}
+
+    return JsonResponse(returnData)
 
 
 @csrf_exempt
 def updateDiagrams(request):
 
     timespan = request.POST.get('timespan')
-    """
-    if timespan == 'allTime':
-        return HttpResponse("All time works fine")
-    elif timespan == 'thisMonth':
-        return HttpResponse("This month works fine")
-    else:
-        return HttpResponse("Nothing bloody works")
-    """
+
     allEntriesList, allProjectsDict, mostCommonEntries = fetchAllUserData(request, timespan)
 
     # allEntriesList = list of todolist objects - THIS IS THE BIT THAT IS CAUSING PROBLEMS
@@ -101,9 +110,6 @@ def updateDiagrams(request):
     #returnData = {'allEntriesList': allEntriesList, 'allProjectsDict': allProjectsDict, 'mostCommonEntries': mostCommonEntries}
 
     return JsonResponse(returnData)
-
-    #return HttpResponse(timespan)
-    #return render(request, 'viewEntries.html', context={'allEntries': allEntriesList, 'allProjectsDict': allProjectsDict, 'mostCommonEntries': mostCommonEntries})
 
 
 # THESE ARE NOT VIEWS - JUST HELPER FUNCTIONS. MOVE THEM TO HELPERS.PY FILE
