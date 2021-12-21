@@ -286,28 +286,24 @@
         url: "updateDiagrams",
         data: {'timespan': timeSpan},
         success: function(response){
-          //console.log("The ajax request has succeeded")
           var receivedEntries = JSON.parse(response['allEntriesList']);
-          for(var i =0; i <receivedEntries.length; i++){
-            console.log("Entry: " + receivedEntries[i]['fields']['id'])
-          }
-
-          // for(var i = 0; i < receivedEntries.length; i++){
-          //   console.log(receivedEntries[i]['fields']['item']);
-          // }
-
+         
           var newTableRows = '<div class="table-style"><table class="table table-hover"><tr><th>Activity</th><th>Duration</th><th>Entry time</th><th>Project</th><th>Delete</th></tr>';
 
           // update the table displaying all the time entries and their details
           for(var i = 0; i < receivedEntries.length; i++){
+
+            var itemID = receivedEntries[i]['pk']
+
             var row = '<tr><td>' + receivedEntries[i]['fields']['item'] + '</td>';
             row += '<td>' + receivedEntries[i]['fields']['duration'] + '</td>';
             // the format of entryTime needs to be updated
             row += '<td>' + receivedEntries[i]['fields']['entryTime'] + '</td>';
             row += '<td>' + receivedEntries[i]['fields']['associatedProject'] + '</td>';
             //row += '<td>' + "<p>Button</p>" + '</td>';
-
-            row +=  '<td>' + '<button type=\"button\" class=\"btn btn-danger\">Delete</button>' + '</td>';
+            
+            // row +=  '<td>' + '<button type=\"button\" class=\"btn btn-danger\">Delete</button>' + '</td>';
+            row +=  '<td>' + '<button type=\"button\" class=\"btn btn-danger\" id=\"' + itemID + '\">Delete</button>' + '</td>';
 
             row += '</tr>'
             newTableRows += row;
@@ -356,7 +352,8 @@
         data: {'entryID': this.id},
         success: function(response){
           console.log("success")
-          $('#allEntriesTable').load(' #allEntriesTable > *');
+          //$('#allEntriesTable').load(' #allEntriesTable > *');
+          window.location.reload;
         }
       });
     });

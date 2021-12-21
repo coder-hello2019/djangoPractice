@@ -97,10 +97,8 @@ def updateDiagrams(request):
     # allProjectsDict = dict of strings and ints
     # mostCommonEntries = dict of strings and ints
 
-    #returnData = {'allEntriesList': serializers.serializer(allEntriesList), 'allProjectsDict': allProjectsDict, 'mostCommonEntries': mostCommonEntries}
     returnData = {'allEntriesList': serializers.serialize("json", allEntriesList), 'allProjectsDict': allProjectsDict, 'mostCommonEntries': mostCommonEntries}
-    print(type(allEntriesList))
-    # this refreshes the page - ideally we would do this in place without a refresh
+    #returnData = {'allEntriesList': allEntriesList, 'allProjectsDict': allProjectsDict, 'mostCommonEntries': mostCommonEntries}
 
     return JsonResponse(returnData)
 
@@ -127,9 +125,6 @@ def fetchAllUserData(request, timespan):
         tomorrow = today + timedelta(days=1)
         # we need to include tomorrow instead of today in the timerange because __range doesn't show the results for today (as per documentation)
         allUserData = todoList.objects.all().filter(entryTime__range=(thisTimeLastWeek, tomorrow))
-
-    for item in allUserData:
-        print(f"Relevant ID in allUserData: {item.id}")
 
     # convert the allUserData queryset into a list
     allUserEntries = [item for item in allUserData]
