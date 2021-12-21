@@ -61,6 +61,7 @@
         <select name="cars" id="timeSpansList" class="form-select">
           <option value=allTime>All time</option>
           <option value=thisMonth>This month</option>
+          <option value="thisWeek">This week</option>
         </select>
         <!--<datalist id="timeSpans">
           <option value=allTime>All time</option>
@@ -287,10 +288,13 @@
         success: function(response){
           //console.log("The ajax request has succeeded")
           var receivedEntries = JSON.parse(response['allEntriesList']);
-
-          for(var i = 0; i < receivedEntries.length; i++){
-            console.log(receivedEntries[i]['fields']['item']);
+          for(var i =0; i <receivedEntries.length; i++){
+            console.log("Entry: " + receivedEntries[i]['fields']['id'])
           }
+
+          // for(var i = 0; i < receivedEntries.length; i++){
+          //   console.log(receivedEntries[i]['fields']['item']);
+          // }
 
           var newTableRows = '<div class="table-style"><table class="table table-hover"><tr><th>Activity</th><th>Duration</th><th>Entry time</th><th>Project</th><th>Delete</th></tr>';
 

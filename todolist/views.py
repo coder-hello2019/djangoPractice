@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 
 from datetime import timedelta
+from datetime import timezone
 import datetime
 import json
 
@@ -113,11 +114,23 @@ def fetchAllUserData(request, timespan):
 
     # ALL USER DATA
     # fetch user data for just this month
-    if timespan != 'allTime':
+    if timespan == 'thisMonth':
+    #if timespan != 'allTime':
         allUserData = todoList.objects.all().filter(userID_id=request.user, entryTime__month = today.month)
     # or fetch data for all time, depending on user selection
-    else:
+    elif timespan == 'allTime':
         allUserData = todoList.objects.all().filter(userID_id=request.user)
+    # or fetch data for just the current week (being the last 7 days, not the calendar week)
+    else:
+        today = datetime.datetime.now().date()
+        thisTimeLastWeek = today - timedelta(days=7)
+        tomorrow = today + timedelta(days=1)
+        # we need to include tomorrow instead of today in the timerange because __range doesn't show the results for today (as per documentation)
+        allUserData = todoList.objects.all().filter(entryTime__range=(thisTimeLastWeek, tomorrow))
+
+    for item in allUserData:
+        print(f"Relevant ID in allUserData: {item.id}")
+
     # convert the allUserData queryset into a list
     allUserEntries = [item for item in allUserData]
 
