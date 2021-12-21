@@ -121,6 +121,58 @@
 
   <script>
 
+    function updateDataView(refreshedData) {
+      var receivedEntries = JSON.parse(refreshedData['allEntriesList']);
+         
+          var newTableRows = '<div class="table-style"><table class="table table-hover"><tr><th>Activity</th><th>Duration</th><th>Entry time</th><th>Project</th><th>Delete</th></tr>';
+
+          // update the table displaying all the time entries and their details
+          for(var i = 0; i < receivedEntries.length; i++){
+
+            var itemID = receivedEntries[i]['pk']
+
+            var row = '<tr><td>' + receivedEntries[i]['fields']['item'] + '</td>';
+            row += '<td>' + receivedEntries[i]['fields']['duration'] + '</td>';
+            // the format of entryTime needs to be updated
+            row += '<td>' + receivedEntries[i]['fields']['entryTime'] + '</td>';
+            row += '<td>' + receivedEntries[i]['fields']['associatedProject'] + '</td>';
+            //row += '<td>' + "<p>Button</p>" + '</td>';
+            
+            // row +=  '<td>' + '<button type=\"button\" class=\"btn btn-danger\">Delete</button>' + '</td>';
+            row +=  '<td>' + '<button type=\"button\" class=\"btn btn-danger\" id=\"' + itemID + '\">Delete</button>' + '</td>';
+
+            row += '</tr>'
+            newTableRows += row;
+          }
+          newTableRows += '</table></div>';
+          document.getElementById("allEntriesTable").innerHTML = newTableRows;
+
+          // update the pie chart
+          var updatedPieLabels = [];
+          var updatedPieData = [];
+
+          for(var key in refreshedData['allProjectsDict']){
+            updatedPieLabels.push(key);
+            updatedPieData.push(refreshedData['allProjectsDict'][key]);
+          }
+          data1['datasets'][0]['data'] = updatedPieData;
+          data1['labels'] = updatedPieLabels;
+          myChart1.update();
+
+          // update the bar chart
+          var updatedBarLabels = [];
+          var updatedBarData = [];
+
+          for(var key in refreshedData['mostCommonEntries']){
+            updatedBarLabels.push(key);
+            updatedBarData.push(refreshedData['mostCommonEntries'][key]);
+          }
+
+          data2['datasets'][0]['data'] = updatedBarData;
+          data2['labes'] = updatedBarLabels;
+          myChart2.update();
+    }
+
     // data and display for the projects-proportionality pie chart
     const labels1 = [];
     const datapoints1 = [];
@@ -286,55 +338,56 @@
         url: "updateDiagrams",
         data: {'timespan': timeSpan},
         success: function(response){
-          var receivedEntries = JSON.parse(response['allEntriesList']);
+          updateDataView(response)
+          // var receivedEntries = JSON.parse(response['allEntriesList']);
          
-          var newTableRows = '<div class="table-style"><table class="table table-hover"><tr><th>Activity</th><th>Duration</th><th>Entry time</th><th>Project</th><th>Delete</th></tr>';
+          // var newTableRows = '<div class="table-style"><table class="table table-hover"><tr><th>Activity</th><th>Duration</th><th>Entry time</th><th>Project</th><th>Delete</th></tr>';
 
-          // update the table displaying all the time entries and their details
-          for(var i = 0; i < receivedEntries.length; i++){
+          // // update the table displaying all the time entries and their details
+          // for(var i = 0; i < receivedEntries.length; i++){
 
-            var itemID = receivedEntries[i]['pk']
+          //   var itemID = receivedEntries[i]['pk']
 
-            var row = '<tr><td>' + receivedEntries[i]['fields']['item'] + '</td>';
-            row += '<td>' + receivedEntries[i]['fields']['duration'] + '</td>';
-            // the format of entryTime needs to be updated
-            row += '<td>' + receivedEntries[i]['fields']['entryTime'] + '</td>';
-            row += '<td>' + receivedEntries[i]['fields']['associatedProject'] + '</td>';
-            //row += '<td>' + "<p>Button</p>" + '</td>';
+          //   var row = '<tr><td>' + receivedEntries[i]['fields']['item'] + '</td>';
+          //   row += '<td>' + receivedEntries[i]['fields']['duration'] + '</td>';
+          //   // the format of entryTime needs to be updated
+          //   row += '<td>' + receivedEntries[i]['fields']['entryTime'] + '</td>';
+          //   row += '<td>' + receivedEntries[i]['fields']['associatedProject'] + '</td>';
+          //   //row += '<td>' + "<p>Button</p>" + '</td>';
             
-            // row +=  '<td>' + '<button type=\"button\" class=\"btn btn-danger\">Delete</button>' + '</td>';
-            row +=  '<td>' + '<button type=\"button\" class=\"btn btn-danger\" id=\"' + itemID + '\">Delete</button>' + '</td>';
+          //   // row +=  '<td>' + '<button type=\"button\" class=\"btn btn-danger\">Delete</button>' + '</td>';
+          //   row +=  '<td>' + '<button type=\"button\" class=\"btn btn-danger\" id=\"' + itemID + '\">Delete</button>' + '</td>';
 
-            row += '</tr>'
-            newTableRows += row;
-          }
-          newTableRows += '</table></div>';
-          document.getElementById("allEntriesTable").innerHTML = newTableRows;
+          //   row += '</tr>'
+          //   newTableRows += row;
+          // }
+          // newTableRows += '</table></div>';
+          // document.getElementById("allEntriesTable").innerHTML = newTableRows;
 
-          // update the pie chart
-          var updatedPieLabels = [];
-          var updatedPieData = [];
+          // // update the pie chart
+          // var updatedPieLabels = [];
+          // var updatedPieData = [];
 
-          for(var key in response['allProjectsDict']){
-            updatedPieLabels.push(key);
-            updatedPieData.push(response['allProjectsDict'][key]);
-          }
-          data1['datasets'][0]['data'] = updatedPieData;
-          data1['labels'] = updatedPieLabels;
-          myChart1.update();
+          // for(var key in response['allProjectsDict']){
+          //   updatedPieLabels.push(key);
+          //   updatedPieData.push(response['allProjectsDict'][key]);
+          // }
+          // data1['datasets'][0]['data'] = updatedPieData;
+          // data1['labels'] = updatedPieLabels;
+          // myChart1.update();
 
-          // update the bar chart
-          var updatedBarLabels = [];
-          var updatedBarData = [];
+          // // update the bar chart
+          // var updatedBarLabels = [];
+          // var updatedBarData = [];
 
-          for(var key in response['mostCommonEntries']){
-            updatedBarLabels.push(key);
-            updatedBarData.push(response['mostCommonEntries'][key]);
-          }
+          // for(var key in response['mostCommonEntries']){
+          //   updatedBarLabels.push(key);
+          //   updatedBarData.push(response['mostCommonEntries'][key]);
+          // }
 
-          data2['datasets'][0]['data'] = updatedBarData;
-          data2['labes'] = updatedBarLabels;
-          myChart2.update();
+          // data2['datasets'][0]['data'] = updatedBarData;
+          // data2['labes'] = updatedBarLabels;
+          // myChart2.update();
 
         },
       })
@@ -352,8 +405,7 @@
         data: {'entryID': this.id},
         success: function(response){
           console.log("success")
-          //$('#allEntriesTable').load(' #allEntriesTable > *');
-          window.location.reload;
+          $('#allEntriesTable').load(' #allEntriesTable > *');
         }
       });
     });
